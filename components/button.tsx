@@ -16,8 +16,8 @@ export default function Button({
   return (
     <button
       className={cls(
-        "transition ease-in-out 1s hover:bg-purple-400 text-base w-full rounded-md px-4 font-medium",
-        large ? "py-3" : "py-1",
+        "transition ease-in-out 1s hover:bg-purple-400 text-base w-full rounded-md px-4 font-medium ",
+        large ? "text-sm py-3" : "py-2",
         bgblack ? "text-gray-50" : "text-black",
         bgcolor
       )}

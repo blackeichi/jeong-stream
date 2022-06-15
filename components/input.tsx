@@ -6,5 +6,11 @@ interface InputProps {
 }
 
 export default function Input({ inputtype, inputname }: InputProps) {
-  return <input type={inputtype} name={inputname} />;
+  return (
+    <input
+      className="bg-slate-200 rounded-md p-3 focus:bg-white focus:outline-2 focus:outline-violet-700 box-content"
+      type={inputtype}
+      name={inputname}
+    />
+  );
 }
