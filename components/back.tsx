@@ -7,7 +7,7 @@ interface BackProps {
 
 export default function Back({ text, where }: BackProps) {
   return (
-    <div className="flex px-4 py-2 w-full items-center justify-start font-bold box-border fixed">
+    <div className="bg-white z-10 flex px-4 py-2 w-full items-center justify-start font-bold box-border fixed">
       <Link href={where}>
         <a>
           <svg
