@@ -3,18 +3,56 @@ import Back from "../../components/back";
 import Label from "../../components/label";
 import Input from "../../components/input";
 import Button from "../../components/button";
+import ErrorMsg from "../../components/error";
 import Link from "next/link";
 import { useState } from "react";
+import { FieldErrors, useForm } from "react-hook-form";
+
+interface EnterForm {
+  phone?: string;
+  email?: string;
+  id?: string;
+  bimil?: string;
+  birth?: Date;
+  service: boolean;
+  personal: boolean;
+}
 
 const Signup: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    resetField,
+    setError,
+    watch,
+    formState: { errors },
+  } = useForm<EnterForm>({
+    mode: "onChange",
+  });
+
   const [method, setMethod] = useState<"email" | "phone">("phone");
-  const onPhoneClick = () => setMethod("phone");
-  const onEmailClick = () => setMethod("email");
+  const onPhoneClick = () => {
+    setMethod("phone");
+    resetField("email");
+  };
+  const onEmailClick = () => {
+    setMethod("email");
+    resetField("phone");
+  };
+  const onValid = (data: EnterForm) => {
+    console.log(data);
+  };
+  const onInvalid = (errors: FieldErrors) => {
+    console.log(errors);
+  };
   return (
     <>
       <Back where="/enter" text="회원가입"></Back>
       <div className="w-full h-screen flex flex-col justify-between items-center px-3 box-border pt-16">
-        <form className="select-none flex flex-col w-full sm:w-96 2xl:w-1/3 box-border">
+        <form
+          onSubmit={handleSubmit(onValid)}
+          className="select-none flex flex-col w-full sm:w-96 2xl:w-1/3 box-border"
+        >
           {method === "phone" ? (
             <>
               {" "}
@@ -25,7 +63,9 @@ const Signup: NextPage = () => {
                 </div>
                 <div className="flex justify-center relative w-full">
                   <Input
-                    inputname="phone"
+                    register={register("phone", {
+                      required: "Phonenumber is required!",
+                    })}
                     inputtype="tel"
                     restthing="pl-12 w-full"
                   ></Input>
@@ -36,6 +76,7 @@ const Signup: NextPage = () => {
                   ></Label>
                 </div>
               </div>
+              <ErrorMsg message={errors.phone?.message}></ErrorMsg>
               <div>
                 <span className="text-xs text-slate-600">
                   전화번호를 인증해야 합니다.
@@ -62,7 +103,11 @@ const Signup: NextPage = () => {
             <>
               {" "}
               <Label htmlfor="email" text="이메일"></Label>
-              <Input inputname="email" inputtype="email"></Input>
+              <Input
+                register={register("email", { required: "Email is required" })}
+                inputtype="email"
+              ></Input>
+              <ErrorMsg message={errors.email?.message}></ErrorMsg>
               <div>
                 <span className="text-xs text-slate-600">
                   이메일 계정을 인증해야 합니다.
@@ -85,38 +130,64 @@ const Signup: NextPage = () => {
             </>
           ) : null}
           <Label htmlfor="id" text="아이디"></Label>
-          <Input inputname="id" inputtype="text"></Input>
+          <Input
+            register={register("id", { required: "아이디를 입력해주세요." })}
+            inputtype="text"
+          ></Input>
+          <ErrorMsg message={errors.id?.message}></ErrorMsg>
           <Label htmlfor="bimil" text="비밀번호"></Label>
-          <Input inputname="bimil" inputtype="password"></Input>
+          <Input
+            register={register("bimil", {
+              required: "비밀번호를 입력해주세요.",
+            })}
+            inputtype="password"
+          ></Input>
+          <ErrorMsg message={errors.bimil?.message}></ErrorMsg>
           <Label htmlfor="birth" text="생년월일"></Label>
-          <Input inputname="birth" inputtype="text"></Input>
+          <Input register={register("birth", {})} inputtype="text"></Input>
+          <ErrorMsg message={errors.birth?.message}></ErrorMsg>
           <span className="text-xs py-4">
             계정을 생성하기 위하여 다음에 동의하여 주시기 바랍니다.
           </span>
-          <div className="text-xs md:text-sm pb-4 flex items-center gap-2">
+          <div className="text-xs md:text-sm pb-7 flex items-center gap-2 relative">
             <input
+              {...register("service", {
+                required: "Twitch의 서비스 약관에 동의해야 합니다.",
+              })}
               className="w-4 h-4 cursor-pointer"
               type="checkbox"
               value="true"
-              name="service"
             />
             <label htmlFor="service">
               Twitch의 서비스 약관에 동의하여 주시기 바랍니다.
             </label>
+            <ErrorMsg
+              restthing="absolute bottom-0 pb-2"
+              message={errors.service?.message}
+            ></ErrorMsg>
           </div>
-          <div className="text-xs md:text-sm pb-4 flex items-center gap-2">
+
+          <div className="text-xs md:text-sm pb-7 flex items-center gap-2 relative">
             <input
+              {...register("personal", {
+                required: "개인정보 처리방침에 동의해야 합니다.",
+              })}
               className="w-4 h-4 cursor-pointer"
               type="checkbox"
               value="true"
-              name="personal"
             />
             <label className="w-fit" htmlFor="personal">
               개인정보 수집항목, 이용목적, 보유기간이 설명되어 있는 Twitch의
               개인정보 처리방침을 읽고 이해하였습니다.
             </label>
+            <ErrorMsg
+              restthing="absolute bottom-0 pb-2"
+              message={errors.personal?.message}
+            ></ErrorMsg>
           </div>
+
           <Button text="로그인" bgcolor="bg-slate-200" large={true}></Button>
+          {}
         </form>
         <div className="sm:w-96 2xl:w-1/3 h-1/3 flex flex-col justify-center text-xs md:text-sm">
           <span>

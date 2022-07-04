@@ -1,15 +1,17 @@
+import { UseFormRegisterReturn } from "react-hook-form";
 import { cls } from "../libs/client/utils";
 
 interface InputProps {
   inputtype: string;
-  inputname: string;
   restthing?: string;
+  register?: UseFormRegisterReturn;
 }
 
 export default function Input({
   inputtype,
-  inputname,
   restthing = "",
+  register,
+  ...rest
 }: InputProps) {
   return (
     <input
@@ -18,7 +20,8 @@ export default function Input({
         restthing
       )}
       type={inputtype}
-      name={inputname}
+      {...register}
+      {...rest}
     />
   );
 }
