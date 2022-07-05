@@ -3,7 +3,33 @@ import client from "../../../libs/client";
 import withHandler from "../../../libs/server/withHandler";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { phone, email, username } = req.body;
+  const { phone, email, username, bimil, birth } = req.body;
+  console.log(req.body);
+  let error;
+  const payload = phone ? { phone: +phone } : { email };
+  const existId = await client.user.findUnique({
+    where: {
+      username,
+    },
+  });
+  if (existId) {
+    error = "이미 존재하는 ID입니다.";
+    return res.status(404).end();
+  }
+  const user = await client.user.upsert({
+    where: {
+      ...payload,
+    },
+    create: {
+      ...payload,
+      username,
+      password: bimil,
+      birth,
+    },
+    update: {},
+  });
+  console.log(user);
+  /*   let error;
   let user;
   if (email) {
     user = await client.user.findUnique({
@@ -11,7 +37,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         email,
       },
     });
-    if (user) console.log("Email Exist");
+    if (user) {
+      error = "Email Exist";
+      return res.status(404).end();
+    }
     if (!user) {
       console.log("사용가능한 이메일입니다.");
     }
@@ -21,7 +50,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         phone: +phone,
       },
     });
-    if (user) console.log("Phone Exist");
+    if (user) {
+      error = "Phone Exist";
+      return res.status(404).end();
+    }
     if (!user) {
       console.log("사용가능한 핸드폰번호입니다.");
     }
@@ -31,9 +63,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       username,
     },
   });
-  if (user) console.log("이미 존재하는 ID입니다.");
-  if (!user) console.log("사용가능한 ID입니다.");
-
+  if (user) {
+    error = "이미 존재하는 ID입니다.";
+    return res.status(404).end();
+  }
+  if (!user) {
+    const created = await client.user.create({
+      data: {
+        username,
+        phone,
+        email,
+        password: bimil,
+        birth,
+      },
+    });
+  } */
   return res.status(200).end();
 }
 export default withHandler("POST", handler);
