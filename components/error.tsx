@@ -1,5 +1,5 @@
 import { UseFormRegisterReturn } from "react-hook-form";
-import { cls } from "../libs/client/utils";
+import { cls } from "../libs/utils";
 
 interface Msg {
   message?: string | undefined;

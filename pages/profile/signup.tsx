@@ -11,7 +11,7 @@ import { FieldErrors, useForm } from "react-hook-form";
 interface EnterForm {
   phone?: string;
   email?: string;
-  id?: string;
+  username?: string;
   bimil?: string;
   birth?: Date;
   service: boolean;
@@ -19,6 +19,7 @@ interface EnterForm {
 }
 
 const Signup: NextPage = () => {
+  const [submitting, setSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -40,7 +41,16 @@ const Signup: NextPage = () => {
     resetField("phone");
   };
   const onValid = (data: EnterForm) => {
-    console.log(data);
+    setSubmitting(true);
+    fetch("/api/users/enter", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then(() => {
+      setSubmitting(false);
+    });
   };
   const onInvalid = (errors: FieldErrors) => {
     console.log(errors);
@@ -129,12 +139,14 @@ const Signup: NextPage = () => {
               </div>
             </>
           ) : null}
-          <Label htmlfor="id" text="아이디"></Label>
+          <Label htmlfor="username" text="아이디"></Label>
           <Input
-            register={register("id", { required: "아이디를 입력해주세요." })}
+            register={register("username", {
+              required: "아이디를 입력해주세요.",
+            })}
             inputtype="text"
           ></Input>
-          <ErrorMsg message={errors.id?.message}></ErrorMsg>
+          <ErrorMsg message={errors.username?.message}></ErrorMsg>
           <Label htmlfor="bimil" text="비밀번호"></Label>
           <Input
             register={register("bimil", {
