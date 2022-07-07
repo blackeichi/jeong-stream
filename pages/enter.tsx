@@ -1,8 +1,10 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import Button from "../components/button";
+import useNotUser from "../libs/useNotUser";
 
 const Enter: NextPage = () => {
+  useNotUser();
   return (
     <div className="bg-purple-600 w-full h-screen xl:text-3xl lg:text-2xl md:text-xl sm:text-lg font-semibold items-center flex flex-col justify-center gap-y-5">
       <div className="overflow-hidden relative grid grid-cols-3 gap-1 ">

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import useMutation from "../../libs/useMutation";
 
 interface EnterForm {
   phone?: string;
@@ -18,15 +19,18 @@ interface EnterForm {
   service: boolean;
   personal: boolean;
 }
-
+interface MutationResult {
+  ok: boolean;
+  error?: string;
+}
 const Signup: NextPage = () => {
   const [submitting, setSubmitting] = useState(false);
+  const [signup, { loading, data, error }] =
+    useMutation<MutationResult>("/api/users/signup");
   const {
     register,
     handleSubmit,
     resetField,
-    setError,
-    watch,
     formState: { errors },
   } = useForm<EnterForm>({
     mode: "onChange",
@@ -41,24 +45,15 @@ const Signup: NextPage = () => {
     setMethod("email");
     resetField("phone");
   };
-  const onValid = (data: EnterForm) => {
-    setSubmitting(true);
-    fetch("/api/users/enter", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((data) => {
-        console.log(data);
-        if (data.ok) {
-          return router.replace("/profile/signin");
-        }
-      })
-      .then(() => {
-        setSubmitting(false);
-      });
+
+  const onValid = (signupdata: EnterForm) => {
+    if (loading) return;
+    signup(signupdata);
+    //signup기능으로 데이터를 보내면, useMutaion에서 api로 데이터를 보내고, loading = false로 설정
+    //응답이 오면, response.json()으로 변환 후, data값에 api에서 응답한 값을 넣음.
+    if (data?.ok) {
+      router.replace("/profile/signin");
+    }
   };
   const onInvalid = (errors: FieldErrors) => {
     console.log(errors);
@@ -96,9 +91,14 @@ const Signup: NextPage = () => {
               </div>
               <ErrorMsg message={errors.phone?.message}></ErrorMsg>
               <div>
-                <span className="text-xs text-slate-600">
-                  전화번호를 인증해야 합니다.
-                </span>
+                {data?.error ? (
+                  <ErrorMsg message={data.error}></ErrorMsg>
+                ) : (
+                  <span className="text-xs text-slate-600">
+                    전화번호를 인증해야 합니다.
+                  </span>
+                )}
+
                 <div
                   onClick={onEmailClick}
                   className="text-purple-600 flex gap-2 p-1 cursor-pointer w-fit active:bg-purple-200 "
@@ -127,9 +127,13 @@ const Signup: NextPage = () => {
               ></Input>
               <ErrorMsg message={errors.email?.message}></ErrorMsg>
               <div>
-                <span className="text-xs text-slate-600">
-                  이메일 계정을 인증해야 합니다.
-                </span>
+                {data?.error ? (
+                  <ErrorMsg message={data.error}></ErrorMsg>
+                ) : (
+                  <span className="text-xs text-slate-600">
+                    이메일 계정을 인증해야 합니다.
+                  </span>
+                )}
                 <div
                   onClick={onPhoneClick}
                   className="text-purple-600 flex gap-2 p-1 cursor-pointer w-fit active:bg-purple-200 "

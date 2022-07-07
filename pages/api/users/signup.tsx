@@ -1,8 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import client from "../../../libs/client";
 import withHandler from "../../../libs/server/withHandler";
+import useNotUser from "../../../libs/useNotUser";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  useNotUser();
   const { phone, email, username, bimil, birth } = req.body;
   let error;
   const payload = phone ? { phone: +phone } : { email };
@@ -13,7 +15,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
   if (existId) {
     error = "이미 존재하는 ID입니다.";
-    return res.status(404).end();
+    return res.status(404).json({ error });
   }
   const user = await client.user.upsert({
     where: {
@@ -26,6 +28,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       birth,
     },
     update: {},
+  });
+  if (!user) {
+    error = phone
+      ? "이미 존재하는 핸드폰 번호입니다."
+      : "이미 존재하는 이메일입니다.";
+    return res.status(404).json({ error });
+  }
+  return res.json({
+    ok: true,
   });
   /*   let error;
   let user;
@@ -76,8 +87,5 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     });
   } */
-  return res.json({
-    ok: true,
-  });
 }
-export default withHandler("POST", handler);
+export default withHandler({ method: "POST", handler, isPrivate: false });
