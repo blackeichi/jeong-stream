@@ -4,7 +4,6 @@ import withHandler from "../../../libs/server/withHandler";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { phone, email, username, bimil, birth } = req.body;
-  console.log(req.body);
   let error;
   const payload = phone ? { phone: +phone } : { email };
   const existId = await client.user.findUnique({
@@ -28,7 +27,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     },
     update: {},
   });
-  console.log(user);
   /*   let error;
   let user;
   if (email) {
@@ -78,6 +76,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     });
   } */
-  return res.status(200).end();
+  return res.json({
+    ok: true,
+  });
 }
 export default withHandler("POST", handler);

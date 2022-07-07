@@ -7,6 +7,7 @@ import ErrorMsg from "../../components/error";
 import Link from "next/link";
 import { useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 
 interface EnterForm {
   phone?: string;
@@ -30,7 +31,7 @@ const Signup: NextPage = () => {
   } = useForm<EnterForm>({
     mode: "onChange",
   });
-
+  const router = useRouter();
   const [method, setMethod] = useState<"email" | "phone">("phone");
   const onPhoneClick = () => {
     setMethod("phone");
@@ -48,9 +49,16 @@ const Signup: NextPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).then(() => {
-      setSubmitting(false);
-    });
+    })
+      .then((data) => {
+        console.log(data);
+        if (data.ok) {
+          return router.replace("/profile/signin");
+        }
+      })
+      .then(() => {
+        setSubmitting(false);
+      });
   };
   const onInvalid = (errors: FieldErrors) => {
     console.log(errors);
