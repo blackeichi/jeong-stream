@@ -4,7 +4,6 @@ import withHandler from "../../../libs/server/withHandler";
 import useNotUser from "../../../libs/useNotUser";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  useNotUser();
   const { phone, email, username, bimil, birth } = req.body;
   let error;
   const payload = phone ? { phone: +phone } : { email };

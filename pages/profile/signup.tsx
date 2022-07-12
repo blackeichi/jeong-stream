@@ -9,6 +9,7 @@ import { useState } from "react";
 import { FieldErrors, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import useMutation from "../../libs/useMutation";
+import useNotUser from "../../libs/useNotUser";
 
 interface EnterForm {
   phone?: string;
@@ -24,6 +25,7 @@ interface MutationResult {
   error?: string;
 }
 const Signup: NextPage = () => {
+  const user = useNotUser();
   const [submitting, setSubmitting] = useState(false);
   const [signup, { loading, data, error }] =
     useMutation<MutationResult>("/api/users/signup");

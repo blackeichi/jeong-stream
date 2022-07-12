@@ -12,6 +12,7 @@ export default function useNotUser() {
           alert("비정상 접근입니다.");
           return router.replace("/");
         }
+        setUser(data.profile);
       });
   }, [router]);
   return user;

@@ -51,6 +51,7 @@ const Signin: NextPage = () => {
         >
           <Label htmlfor="id" text="아이디"></Label>
           <ErrorMsg message={errors.username?.message}></ErrorMsg>
+
           <Input
             register={register("username", {
               required: "아이디를 입력해주세요.",
@@ -59,6 +60,7 @@ const Signin: NextPage = () => {
           ></Input>
           <Label htmlfor="bimil" text="비밀번호"></Label>
           <ErrorMsg message={errors.password?.message}></ErrorMsg>
+
           <Input
             register={register("password", {
               required: "비밀번호를 입력해주세요.",
@@ -70,6 +72,7 @@ const Signin: NextPage = () => {
               아이디가 없으신가요?
             </a>
           </Link>
+          <ErrorMsg message={data?.error}></ErrorMsg>
           <Button text="로그인" bgcolor="bg-slate-200" large={true}></Button>
         </form>
         <div className="sm:w-96 2xl:w-1/3 h-1/3 flex flex-col justify-center text-xs md:text-sm">
